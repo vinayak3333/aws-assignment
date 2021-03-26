@@ -1,0 +1,22 @@
+Create local yum repo on EC2 instances
+1)create 2 EC2 instance with httpd installed and started
+2)install the yum utilities and the createrepo packages:
+#yum install createrepo  yum-utils -y
+#yum install epel-release -y
+3)Prepare the directory structure and synchronize the repositories:
+#mkdir -p /var/www/html/repos
+#chmod -R 755 /var/www/html/repos
+#reposync --repoid=rhel-8-appstream-rhui-rpms --newest-only --download-metadata -p=/var/www/html/repos/centos-7/7/
+4)Create the repositories from what was synced above:
+#createrepo /var/www/html/repos/centos-7/7/rhel-8-appstream-rhui-rpms
+5)sudo systemctl restart httpd
+6)Test the repository from another CentOS 7 instance:
+make changes in repo file in /var/www/html/repos/ and edit baseurl to server ip and repopath (eg. below repo file)
+[vinayak]
+name=vinayak
+baseurl=http://13.126.73.254/repos/centos-7/7/rhel-8-appstream-rhui-rpms/
+enabled=1
+7)yum clean all
+8)check yum list
+#yum list available
+#yum install vim -y
